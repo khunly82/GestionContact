@@ -30,18 +30,24 @@ namespace GestionContact.Controllers
                 {
                     LastName = form.LastName,
                     FirstName = form.FirstName,
-                    BirthDate = form.BirthDate,
-                    Address = new Address
-                    {
-                        Street = form.Street,
-                        City = form.City,
-                        Number = form.Number,
-                    }
+                    BirthDate = form.BirthDate
+                }, new Address
+                {
+                    Street = form.Street,
+                    City = form.City,
+                    Number = form.Number,
                 });
                 TempData["Info"] = "Bravo";
                 return RedirectToAction("Index");
             }
             return View(form);
+        }
+
+
+        public async Task<IActionResult> Details(int id)
+        {
+            Contact model = await contactService.GetById(id);
+            return View(new ContactDetailsViewModel(model));
         }
     }
 }

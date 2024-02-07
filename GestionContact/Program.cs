@@ -11,6 +11,7 @@ builder.Services.AddScoped(s => new HttpClient
 });
 
 builder.Services.AddScoped<ContactService>();
+builder.Services.AddScoped<AddressService>();
 
 var app = builder.Build();
 

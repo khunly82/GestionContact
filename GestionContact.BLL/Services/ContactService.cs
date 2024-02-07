@@ -13,21 +13,27 @@ namespace GestionContact.BLL.Services
         public async Task<List<Contact>> Get()
         {
             List<Contact> list = await client.GetFromJsonAsync<List<Contact>>("/contacts");
-            List<Address> listAddress = await client.GetFromJsonAsync<List<Address>>("/addresses");
-
-            List<Contact> contacts = list.Join(listAddress, c => c.Id, a => a.ContactId, (c, a) => { c.Address = a; return c; }).ToList();
-
-            return contacts;
+            return list;
         }
 
-        public async Task Add(Contact c)
+        public async Task Add(Contact c, Address a)
         {
             HttpResponseMessage message = await client.PostAsJsonAsync("/contacts", c);
             Contact nC = await message.Content.ReadFromJsonAsync<Contact>();
 
-            c.Address.ContactId = nC.Id;
+            a.ContactId = nC.Id;
 
-            await client.PostAsJsonAsync("/addresses", c.Address);
+            await client.PostAsJsonAsync("/addresses", a);
+        }
+
+        public async Task<Contact> GetById(int id)
+        {
+            Contact c = await client.GetFromJsonAsync<Contact>("/contacts/" + id);
+
+            List<Address> addresses = await client.GetFromJsonAsync<List<Address>>("/addresses/?contactId="+id);
+            c.Addresses = addresses;
+
+            return c;
         }
     }
 }
